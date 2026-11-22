@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DJ Flow Pro</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#10121b;color:white;
+ font-family:Arial,sans-serif;padding-bottom:90px
+}
+header{
+ background:#191c2b;padding:22px 16px;
+ border-bottom:2px solid #30364b
+}
+header h1{margin:0;color:#42e8c5;font-size:26px}
+header p{margin:7px 0 0;color:#aeb5ca}
+main{padding:16px;max-width:700px;margin:auto}
+h2{font-size:19px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{
+ padding:19px 12px;border-radius:14px;
+ background:#202438;border:1px solid #343a53;
+ cursor:pointer
+}
+.card strong{display:block;font-size:16px;margin-top:8px}
+.card span{font-size:27px}
+input,button{
+ font:inherit;border-radius:9px;padding:12px;
+}
+input{
+ width:100%;background:#202438;color:white;
+ border:1px solid #414963;margin:8px 0
+}
+button{
+ background:#42e8c5;color:#10121b;
+ border:0;font-weight:bold;cursor:pointer
+}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.actions button{margin:4px 0}
+.song{
+ background:#202438;padding:12px;margin:8px 0;
+ border-radius:10px;display:flex;
+ align-items:center;justify-content:space-between;gap:8px
+}
+.song small{display:block;color:#aeb5ca;margin-top:4px}
+.song button{padding:9px}
+.song .info{flex:1;min-width:0;overflow-wrap:anywhere}
+.songbtns{display:flex;gap:5px;flex-shrink:0}
+.songbtns button{padding:9px 11px}
+.chip{
+ background:#2f3a5c;color:#42e8c5;font-weight:normal;
+ font-size:12px;padding:4px 9px;border-radius:12px;margin-top:5px
+}
+.catpick{display:flex;gap:6px;margin:8px 0}
+.catpick button{
+ background:#2f3a5c;color:white;font-weight:normal;
+ padding:8px 12px;border-radius:16px;font-size:13px
+}
+.catpick button.active{background:#42e8c5;color:#10121b;font-weight:bold}
+#storageInfo{font-size:12px;color:#aeb5ca}
+audio{width:100%;margin-top:12px}
+#message{color:#42e8c5;font-size:13px}
+footer{text-align:center;color:#7e879e;padding:25px}
+
+.deck-container{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.deck{
+  background:#202438;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid #42e8c5;
+  min-width:0;
+}
+.deck h3{color:#42e8c5}
+.deck audio{width:100%;margin-top:10px}
+.deck input[type=range]{padding:0}
+.deck button{margin:3px 0}
+.crossfader{margin:20px 0;background:#202438;padding:15px;border-radius:12px}
+
+.page{display:none}
+.page.active{display:block}
+.soon{
+ background:#202438;border:1px dashed #414963;
+ border-radius:12px;padding:18px;color:#aeb5ca
+}
+#nav{
+ position:fixed;left:0;right:0;bottom:0;z-index:100;
+ display:flex;background:#191c2b;
+ border-top:1px solid #30364b;
+ padding-bottom:env(safe-area-inset-bottom)
+}
+#nav button{
+ flex:1;background:none;color:#aeb5ca;
+ border-radius:0;padding:9px 2px;font-size:12px;
+ font-weight:normal
+}
+#nav button span{display:block;font-size:22px}
+#nav button.active{color:#42e8c5;font-weight:bold}
+
+.chatbox{
+ background:#202438;border:1px solid #343a53;
+ border-radius:14px;padding:10px
+}
+#flowMessages{
+ height:48vh;overflow-y:auto;
+ display:flex;flex-direction:column;gap:8px;padding:4px
+}
+.bubble{
+ max-width:88%;padding:10px 12px;border-radius:14px;
+ line-height:1.4;font-size:15px;
+ white-space:pre-wrap;word-wrap:break-word
+}
+.bubble.me{align-self:flex-end;background:#2f3a5c}
+.bubble.flow{
+ align-self:flex-start;background:#10121b;
+ border:1px solid #343a53
+}
+.bubble button{margin:8px 6px 0 0;padding:8px 10px;font-size:13px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.chips button{
+ background:#2f3a5c;color:white;font-weight:normal;
+ padding:8px 10px;font-size:13px;border-radius:16px
+}
+.chatrow{display:flex;gap:8px}
+.chatrow input{margin:0;flex:1;min-width:0}
+.chatrow button{white-space:nowrap}
+
+.chattop{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.chattop h2{margin:8px 0}
+.chatfilters{display:flex;gap:6px;margin:8px 0}
+.chatfilters button{
+ background:#2f3a5c;color:white;font-weight:normal;
+ padding:8px 12px;border-radius:16px;font-size:13px
+}
+.chatfilters button.active{background:#42e8c5;color:#10121b;font-weight:bold}
+.chatitem{
+ display:flex;align-items:center;gap:12px;
+ background:#202438;padding:12px;margin:8px 0;
+ border-radius:12px;cursor:pointer
+}
+.avatar{
+ width:46px;height:46px;border-radius:50%;
+ background:#2f3a5c;color:#42e8c5;
+ display:flex;align-items:center;justify-content:center;
+ font-weight:bold;font-size:18px;flex-shrink:0
+}
+.avatar.group{background:#42e8c5;color:#10121b}
+.chatinfo{flex:1;min-width:0}
+.chatinfo strong{display:block}
+.chatinfo small{
+ display:block;color:#aeb5ca;margin-top:3px;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.chattime{font-size:12px;color:#7e879e}
+.chatnote{
+ font-size:12px;color:#aeb5ca;background:#202438;
+ border:1px dashed #414963;border-radius:10px;
+ padding:10px;margin:10px 0
+}
+.convohead{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.convohead button{padding:8px 12px}
+#convoMessages{
+ height:52vh;overflow-y:auto;
+ display:flex;flex-direction:column;gap:6px;padding:8px;
+ background:#10121b;border:1px solid #343a53;border-radius:12px
+}
+.msg{
+ max-width:82%;padding:8px 11px;border-radius:12px;
+ font-size:15px;line-height:1.35;
+ word-wrap:break-word;white-space:pre-wrap
+}
+.msg.me{align-self:flex-end;background:#1f6f60}
+.msg.them{align-self:flex-start;background:#202438}
+.msg .who{
+ display:block;font-size:12px;color:#42e8c5;
+ font-weight:bold;margin-bottom:2px
+}
+.msg .when{
+ display:block;font-size:10px;color:#aeb5ca;
+ text-align:right;margin-top:3px
+}
+
+#splash{
+ position:fixed;inset:0;z-index:9999;
+ background:#10121b;
+ display:flex;flex-direction:column;
+ align-items:center;justify-content:center;
+ text-align:center;
+ animation:splashOut .6s ease 2s forwards
+}
+#splash .logo{font-size:64px}
+#splash h1{color:#42e8c5;font-size:34px;margin:10px 0 0}
+#splash p{color:#aeb5ca;margin:8px 0 0}
+@keyframes splashOut{
+ to{opacity:0;visibility:hidden}
+}
+</style>
+</head>
+
+<body>
+<div id="splash">
+ <div class="logo">🎧</div>
+ <h1>DJ FLOW PRO</h1>
+ <p>Your music. Your mix. Your flow.</p>
+</div>
+
+<header>
+ <h1>🎧 DJ FLOW PRO</h1>
+ <p>Your music. Your mix. Your flow.</p>
+</header>
+
+<main>
+
+ <!-- ========== HOME ========== -->
+ <section class="page active" id="page-home">
+  <h2>Welcome, DJ! 🔥</h2>
+  <p>Organise your music for church, parties and events.</p>
+
+  <div class="cards">
+   <div class="card" onclick="setCategory('Christian')">
+    <span>⛪</span><strong>Christian Music</strong>
+    <small>Gospel and worship</small>
+   </div>
+   <div class="card" onclick="setCategory('Worldly')">
+    <span>🎉</span><strong>Worldly Music</strong>
+    <small>Party and dance music</small>
+   </div>
+   <div class="card" onclick="setCategory('Church')">
+    <span>🙏</span><strong>Church Mode</strong>
+    <small>Music for services</small>
+   </div>
+   <div class="card" onclick="setCategory('Party')">
+    <span>🔥</span><strong>Party Mode</strong>
+    <small>Music for celebrations</small>
+   </div>
+  </div>
+
+  <h2>🎧 Professional DJ Decks</h2>
+
+  <div class="deck-container">
+   <div class="deck">
+    <h3>🎧 DECK A</h3>
+    <input type="file" accept="audio/*" onchange="loadDeck('A',this)">
+    <p id="nameA">No track loaded</p>
+    <audio id="audioA" controls></audio>
+    <label>🔊 Volume A</label>
+    <input type="range" min="0" max="1" step="0.01"
+     value="1" oninput="setDeckVolume('A',this.value)">
+   </div>
+
+   <div class="deck">
+    <h3>🎧 DECK B</h3>
+    <input type="file" accept="audio/*" onchange="loadDeck('B',this)">
+    <p id="nameB">No track loaded</p>
+    <audio id="audioB" controls></audio>
+    <label>🔊 Volume B</label>
+    <input type="range" min="0" max="1" step="0.01"
+     value="1" oninput="setDeckVolume('B',this.value)">
+   </div>
+  </div>
+
+  <div class="crossfader">
+   <label>🎚️ CROSS FADER — A ◀ ▶ B</label>
+   <input id="crossfader" type="range" min="0" max="1"
+    step="0.01" value="0.5" style="width:100%"
+    oninput="moveCrossfader(this.value)">
+   <p>Move left for Deck A, right for Deck B.</p>
+  </div>
+
+  <h2>🎚️ Music Player</h2>
+  <p id="nowPlaying">No song selected</p>
+  <audio id="player" controls></audio>
+ </section>
+
+ <!-- ========== LIBRARY ========== -->
+ <section class="page" id="page-library">
+  <h2>📂 Your Music Library</h2>
+  <p id="category">Showing: All Music</p>
+  <p id="storageInfo">Checking storage...</p>
+
+  <input id="search" placeholder="🔍 Search songs..." oninput="renderSongs()">
+
+  <p style="margin:6px 0 0;font-size:13px;color:#aeb5ca">Add new music as:</p>
+  <div class="catpick">
+   <button id="pickChristian" class="active" onclick="setAddCategory('Christian')">⛪ Christian</button>
+   <button id="pickWorldly" onclick="setAddCategory('Worldly')">🎉 Worldly</button>
+  </div>
+
+  <div class="actions">
+   <button onclick="document.getElementById('files').click()">＋ Add Music</button>
+   <button onclick="sortSongs()">Sort A–Z</button>
+   <button onclick="showFavourites()">❤️ Favourites</button>
+   <button onclick="showAll()">Show All</button>
+  </div>
+
+  <input id="files" type="file" accept="audio/*" multiple hidden onchange="addFiles(event)">
+
+  <p id="message">Choose music stored on your phone to get started.</p>
+  <div id="songs"></div>
+ </section>
+
+ <!-- ========== PLAYLISTS ========== -->
+ <section class="page" id="page-playlists">
+  <h2>📋 My Playlist</h2>
+  <div id="playlist"></div>
+  <button onclick="clearPlaylist()">Clear Playlist</button>
+ </section>
+
+ <!-- ========== DJ ========== -->
+ <section class="page" id="page-dj">
+  <h2>🤖 Flow, your DJ assistant</h2>
+  <div class="chatbox">
+   <div id="flowMessages"></div>
+   <div class="chips">
+    <button onclick="flowQuick('Plan 30 minutes of praise')">⛪ 30 min praise</button>
+    <button onclick="flowQuick('Plan 1 hour of party music')">🎉 1 hour party</button>
+    <button onclick="flowQuick('Help me plan a church program')">🙏 Church program</button>
+    <button onclick="flowQuick('How do I mix two songs?')">🎚️ How to mix</button>
+   </div>
+   <div class="chatrow">
+    <input id="flowInput" placeholder="Message Flow..."
+     onkeydown="if(event.key==='Enter')flowSend()">
+    <button onclick="flowSend()">Send</button>
+   </div>
+   <button onclick="flowNewChat()"
+    style="margin-top:8px;background:#2f3a5c;color:white">↻ New chat</button>
+  </div>
+
+  <h2>💬 DJ Chat</h2>
+  <div class="soon">
+   Chat with DJ DO and other DJs.
+   <br><br>
+   <button onclick="openChats()">Open DJ Chat</button>
+  </div>
+ </section>
+
+ <!-- ========== MORE ========== -->
+ <section class="page" id="page-more">
+  <h2>☰ More</h2>
+  <div class="soon">Settings and extra tools will go here later.</div>
+ </section>
+
+ <!-- ========== DJ CHAT ========== -->
+ <section class="page" id="page-chat">
+
+  <div id="chatListView">
+   <div class="chattop">
+    <h2>💬 DJ Chats</h2>
+    <button onclick="chatBackToDJ()">← Flow</button>
+   </div>
+
+   <div class="chatfilters">
+    <button class="active" data-f="all" onclick="setChatFilter('all')">All</button>
+    <button data-f="personal" onclick="setChatFilter('personal')">Personal</button>
+    <button data-f="group" onclick="setChatFilter('group')">Groups</button>
+   </div>
+
+   <button onclick="toggleNewChat()">＋ New chat</button>
+   <div id="newChatBox" style="display:none">
+    <input id="newChatName" placeholder="Name of person or group">
+    <div class="actions">
+     <button onclick="createChat('personal')">Create personal chat</button>
+     <button onclick="createChat('group')">Create group</button>
+    </div>
+   </div>
+
+   <div id="chatList"></div>
+
+   <div class="chatnote">
+    📴 Offline mode: chats are saved on this phone only. Messages cannot reach other DJs' phones until we connect a free online service in a later step.
+   </div>
+  </div>
+
+  <div id="chatConvoView" style="display:none">
+   <div class="convohead">
+    <button onclick="closeConvo()">←</button>
+    <div class="avatar" id="convoAvatar"></div>
+    <div class="chatinfo">
+     <strong id="convoName"></strong>
+     <small id="convoSub"></small>
+    </div>
+   </div>
+   <div id="convoMessages"></div>
+   <div class="chatrow" style="margin-top:8px">
+    <input id="convoInput" placeholder="Type a message"
+     onkeydown="if(event.key==='Enter')sendChatMessage()">
+    <button onclick="sendChatMessage()">Send</button>
+   </div>
+  </div>
+
+ </section>
+
+</main>
+
+<nav id="nav">
+ <button class="active" data-page="home" onclick="showPage('home')"><span>🏠</span>Home</button>
+ <button data-page="library" onclick="showPage('library')"><span>📚</span>Library</button>
+ <button data-page="playlists" onclick="showPage('playlists')"><span>🎶</span>Playlists</button>
+ <button data-page="dj" onclick="showPage('dj')"><span>🎧</span>DJ</button>
+ <button data-page="more" onclick="showPage('more')"><span>☰</span>More</button>
+</nav>
+<script>
+let library=[];
+let playlist=[];
+let favourites=new Set();
+let currentCategory='All Music';
+let onlyFavourites=false;
+let addCategory='Christian';
+let db=null;
+const deckVolumes={A:1,B:1};
+
+function newId(){
+ return 's'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+}
+
+/* ---------- PERMANENT STORAGE (IndexedDB, free, offline) ---------- */
+function openDB(){
+ return new Promise((resolve,reject)=>{
+  if(!window.indexedDB){
+   reject(new Error('IndexedDB not available'));
+   return;
+  }
+  const req=indexedDB.open('djflow_db',1);
+  req.onupgradeneeded=()=>{
+   req.result.createObjectStore('songs',{keyPath:'id'});
+  };
+  req.onsuccess=()=>resolve(req.result);
+  req.onerror=()=>reject(req.error);
+ });
+}
+
+function dbPut(song){
+ if(!db)return Promise.resolve(false);
+ return new Promise(resolve=>{
+  try{
+   const tx=db.transaction('songs','readwrite');
+   tx.objectStore('songs').put({
+    id:song.id,
+    name:song.name,
+    category:song.category,
+    duration:song.duration,
+    blob:song.file
+   });
+   tx.oncomplete=()=>resolve(true);
+   tx.onerror=()=>resolve(false);
+   tx.onabort=()=>resolve(false);
+  }catch(e){
+   resolve(false);
+  }
+ });
+}
+
+function dbDelete(id){
+ if(!db)return Promise.resolve(false);
+ return new Promise(resolve=>{
+  try{
+   const tx=db.transaction('songs','readwrite');
+   tx.objectStore('songs').delete(id);
+   tx.oncomplete=()=>resolve(true);
+   tx.onerror=()=>resolve(false);
+   tx.onabort=()=>resolve(false);
+  }catch(e){
+   resolve(false);
+  }
+ });
+}
+
+function dbGetAll(){
+ return new Promise((resolve,reject)=>{
+  const tx=db.transaction('songs','readonly');
+  const req=tx.objectStore('songs').getAll();
+  req.onsuccess=()=>resolve(req.result);
+  req.onerror=()=>reject(req.error);
+ });
+}
+
+async function updateStorageInfo(){
+ const el=document.getElementById('storageInfo');
+ if(!db){
+  el.textContent='⚠️ Saving is blocked on this device. Songs will disappear when you close the app.';
+  return;
+ }
+ let text='💾 Your music is saved on this phone.';
+ try{
+  if(navigator.storage&&navigator.storage.estimate){
+   const e=await navigator.storage.estimate();
+   text+=' Using '+Math.round((e.usage||0)/1048576)+' MB.';
+  }
+ }catch(err){}
+ el.textContent=text;
+}
+
+function probeDuration(song){
+ const probe=new Audio();
+ probe.preload='metadata';
+ probe.onloadedmetadata=()=>{
+  if(isFinite(probe.duration)&&probe.duration>0){
+   song.duration=probe.duration;
+   dbPut(song);
+   renderSongs();
+  }
+ };
+ probe.src=song.url;
+}
+
+async function initApp(){
+ try{
+  db=await openDB();
+  const rows=await dbGetAll();
+  rows.forEach(r=>{
+   if(!r.blob)return;
+   const song={
+    id:r.id,
+    name:r.name,
+    file:r.blob,
+    url:URL.createObjectURL(r.blob),
+    category:r.category||'Christian',
+    duration:r.duration||0
+   };
+   library.push(song);
+   if(!song.duration)probeDuration(song);
+  });
+  try{
+   if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();
+  }catch(e){}
+ }catch(e){
+  db=null;
+  console.log('Storage unavailable:',e);
+ }
+ loadDJData();
+ renderSongs();
+ renderPlaylist();
+ updateStorageInfo();
+}
+
+/* ---------- PAGES ---------- */
+function showPage(name){
+ document.querySelectorAll('.page').forEach(p=>{
+  p.classList.toggle('active',p.id==='page-'+name);
+ });
+ document.querySelectorAll('#nav button').forEach(b=>{
+  b.classList.toggle('active',b.dataset.page===name);
+ });
+ window.scrollTo(0,0);
+}
+
+function setCategory(category){
+ currentCategory=category;
+ onlyFavourites=false;
+ document.getElementById('category').textContent='Showing: '+category;
+ renderSongs();
+ showPage('library');
+}
+
+function setAddCategory(cat){
+ addCategory=cat;
+ document.getElementById('pickChristian').classList.toggle('active',cat==='Christian');
+ document.getElementById('pickWorldly').classList.toggle('active',cat==='Worldly');
+}
+
+/* ---------- LIBRARY ---------- */
+async function addFiles(event){
+ const files=Array.from(event.target.files||[]);
+ let added=0,saved=0;
+ for(const file of files){
+  if(!file.type.startsWith('audio/'))continue;
+  const song={
+   id:newId(),
+   name:file.name.replace(/\.[^.]+$/,''),
+   file:file,
+   url:URL.createObjectURL(file),
+   category:addCategory,
+   duration:0
+  };
+  library.push(song);
+  added++;
+  if(await dbPut(song))saved++;
+  probeDuration(song);
+ }
+ const msg=document.getElementById('message');
+ if(!added){
+  msg.textContent='No audio files were found in your selection.';
+ }else if(!db){
+  msg.textContent=added+' song(s) added as '+addCategory+'. ⚠️ Saving is blocked on this device, so they will disappear when you close the app.';
+ }else if(saved===added){
+  msg.textContent=added+' song(s) added as '+addCategory+' and saved on this phone ✅';
+ }else{
+  msg.textContent=added+' song(s) added, but some could not be saved (storage may be full).';
+ }
+ renderSongs();
+ updateStorageInfo();
+ event.target.value='';
+}
+
+function toggleFavourite(song){
+ if(favourites.has(song.id))favourites.delete(song.id);
+ else favourites.add(song.id);
+ saveDJData();
+ renderSongs();
+}
+
+function toggleSongCategory(song){
+ song.category=song.category==='Christian'?'Worldly':'Christian';
+ dbPut(song);
+ renderSongs();
+}
+
+function removeSong(song){
+ if(!confirm('Remove "'+song.name+'" from your library?'))return;
+ library=library.filter(s=>s.id!==song.id);
+ favourites.delete(song.id);
+ playlist=playlist.filter(s=>s.id!==song.id);
+ dbDelete(song.id);
+ saveDJData();
+ renderSongs();
+ renderPlaylist();
+ updateStorageInfo();
+}
+
+function renderSongs(){
+ const query=document.getElementById('search').value.toLowerCase();
+ const list=document.getElementById('songs');
+ list.innerHTML='';
+ const filtered=library.filter(song=>{
+  const matches=song.name.toLowerCase().includes(query);
+  const matchesFav=!onlyFavourites||favourites.has(song.id);
+  const matchesCat=['All Music','Church','Party'].includes(currentCategory)
+   || song.category===currentCategory;
+  return matches&&matchesFav&&matchesCat;
+ });
+
+ if(!filtered.length){
+  list.innerHTML='<p>No songs here yet. Tap Add Music to select audio files.</p>';
+  return;
+ }
+
+ filtered.forEach(song=>{
+  const row=document.createElement('div');
+  row.className='song';
+
+  const info=document.createElement('div');
+  info.className='info';
+  const title=document.createElement('strong');
+  title.textContent=song.name;
+  const meta=document.createElement('div');
+  const chip=document.createElement('button');
+  chip.className='chip';
+  chip.textContent=(song.category==='Worldly'?'🎉 Worldly':'⛪ Christian')+' ⇄';
+  chip.onclick=()=>toggleSongCategory(song);
+  const len=document.createElement('span');
+  len.style.cssText='margin-left:8px;font-size:12px;color:#aeb5ca';
+  len.textContent=song.duration>0?fmt(song.duration):'';
+  meta.append(chip,len);
+  info.append(title,meta);
+
+  const buttons=document.createElement('div');
+  buttons.className='songbtns';
+  const play=document.createElement('button');
+  play.textContent='▶';
+  play.onclick=()=>playSong(song);
+  const fav=document.createElement('button');
+  fav.textContent=favourites.has(song.id)?'💚':'♡';
+  fav.onclick=()=>toggleFavourite(song);
+  const add=document.createElement('button');
+  add.textContent='+';
+  add.onclick=()=>{playlist.push(song);saveDJData();renderPlaylist()};
+  const del=document.createElement('button');
+  del.textContent='🗑';
+  del.onclick=()=>removeSong(song);
+  buttons.append(play,fav,add,del);
+
+  row.append(info,buttons);
+  list.append(row);
+ });
+}
+
+function playSong(song){
+ const player=document.getElementById('player');
+ player.src=song.url;
+ document.getElementById('nowPlaying').textContent='Playing: '+song.name;
+ player.play().catch(()=>{});
+}
+
+function sortSongs(){
+ library.sort((a,b)=>a.name.localeCompare(b.name));
+ renderSongs();
+}
+
+function showFavourites(){
+ onlyFavourites=true;
+ document.getElementById('category').textContent='Showing: Favourites';
+ renderSongs();
+}
+
+function showAll(){
+ onlyFavourites=false;
+ currentCategory='All Music';
+ document.getElementById('category').textContent='Showing: All Music';
+ renderSongs();
+}
+
+function renderPlaylist(){
+ const box=document.getElementById('playlist');
+ box.innerHTML='';
+ playlist.forEach((song,index)=>{
+  const row=document.createElement('div');
+  row.className='song';
+  const name=document.createElement('span');
+  name.className='info';
+  name.textContent=(index+1)+'. '+song.name;
+  const play=document.createElement('button');
+  play.textContent='▶';
+  play.onclick=()=>playSong(song);
+  const remove=document.createElement('button');
+  remove.textContent='✕';
+  remove.style.marginLeft='5px';
+  remove.onclick=()=>{
+   playlist.splice(index,1);
+   saveDJData();
+   renderPlaylist();
+  };
+  const controls=document.createElement('div');
+  controls.append(play,remove);
+  row.append(name,controls);
+  box.append(row);
+ });
+ if(!playlist.length)box.innerHTML='<p>Your playlist is empty.</p>';
+}
+
+function clearPlaylist(){
+ playlist=[];
+ saveDJData();
+ renderPlaylist();
+}
+
+/* ---------- DJ DECKS ---------- */
+function loadDeck(deck,input){
+ const file=input.files[0];
+ if(!file)return;
+ const audio=document.getElementById('audio'+deck);
+ audio.src=URL.createObjectURL(file);
+ document.getElementById('name'+deck).textContent=file.name;
+ setDeckVolume(deck,deckVolumes[deck]);
+}
+
+function setDeckVolume(deck,volume){
+ deckVolumes[deck]=Number(volume);
+ applyDeckVolumes(Number(document.getElementById('crossfader').value));
+}
+
+function moveCrossfader(value){
+ applyDeckVolumes(Number(value));
+}
+
+function applyDeckVolumes(cross){
+ document.getElementById('audioA').volume=deckVolumes.A*(1-cross);
+ document.getElementById('audioB').volume=deckVolumes.B*cross;
+}
+
+/* ---------- FLOW ASSISTANT (works offline) ---------- */
+let flowName='';
+let flowPending=null;
+try{flowName=localStorage.getItem('djflow_name')||''}catch(e){}
+
+function fmt(sec){
+ sec=Math.round(sec);
+ const m=Math.floor(sec/60);
+ const s=sec%60;
+ return m+':'+String(s).padStart(2,'0');
+}
+
+function flowAdd(text,who,buttons){
+ const box=document.getElementById('flowMessages');
+ const bubble=document.createElement('div');
+ bubble.className='bubble '+who;
+ bubble.textContent=text;
+ (buttons||[]).forEach(item=>{
+  const btn=document.createElement('button');
+  btn.textContent=item.label;
+  btn.onclick=item.action;
+  bubble.append(btn);
+ });
+ box.append(bubble);
+ box.scrollTop=box.scrollHeight;
+}
+
+function flowHello(){
+ let text=(flowName?'Hi '+flowName+'! 👋 ':'Hi! 👋 ')+
+  "I'm Flow, your DJ assistant. What are we planning today—a church program, a party, or something else?";
+ if(!flowName)text+="\n\nTip: tell me your name, like \"I am Daniel\", and I'll remember it.";
+ flowAdd(text,'flow');
+}
+
+function flowNewChat(){
+ document.getElementById('flowMessages').innerHTML='';
+ flowPending=null;
+ flowHello();
+}
+
+function flowSend(){
+ const input=document.getElementById('flowInput');
+ const text=input.value.trim();
+ if(!text)return;
+ input.value='';
+ flowAdd(text,'me');
+ setTimeout(()=>flowReply(text),300);
+}
+
+function flowQuick(text){
+ flowAdd(text,'me');
+ setTimeout(()=>flowReply(text),300);
+}
+
+function flowMinutes(t){
+ t=t.toLowerCase();
+ let total=0,found=false;
+ const h=t.match(/(\d+(?:\.\d+)?)\s*(?:hours?|hrs?|hr|h)\b/);
+ if(h){total+=parseFloat(h[1])*60;found=true}
+ const m=t.match(/(\d+)\s*(?:minutes?|mins?|min|m)\b/);
+ if(m){total+=parseInt(m[1],10);found=true}
+ if(!found&&/half (an|a) hour/.test(t)){total=30;found=true}
+ if(!found&&/\b(an|one|a) hour\b/.test(t)){total=60;found=true}
+ return found?Math.round(total):null;
+}
+
+function flowCategory(t){
+ t=t.toLowerCase();
+ if(/praise|worship|gospel|church|christian|prayer|service|hymn/.test(t))return 'Christian';
+ if(/party|dance|worldly|afro|club|wedding|celebrat|birthday/.test(t))return 'Worldly';
+ return null;
+}
+
+function flowPlan(mins,cat){
+ if(!library.length){
+  flowAdd("Your library is empty. Go to Library, tap Add Music, choose some songs, then ask me again. 🎵",'flow',
+   [{label:'Open Library',action:()=>showPage('library')}]);
+  return;
+ }
+ let pool=library.filter(s=>s.duration>0);
+ if(!pool.length){
+  flowAdd("I'm still reading the length of your songs. Wait a few seconds and ask me again.",'flow');
+  return;
+ }
+ let note='';
+ if(cat){
+  const matched=pool.filter(s=>s.category===cat);
+  if(matched.length)pool=matched;
+  else note='You have no '+cat+' songs yet, so I used all your songs. (In Library, tap the type label on a song to change it.)\n\n';
+ }
+ const target=mins*60;
+ const shuffled=pool.slice().sort(()=>Math.random()-0.5);
+ const plan=[];
+ let total=0;
+ shuffled.forEach(s=>{
+  if(total+s.duration<=target+90){plan.push(s);total+=s.duration}
+ });
+ if(!plan.length){
+  const shortest=pool.slice().sort((a,b)=>a.duration-b.duration)[0];
+  plan.push(shortest);
+  total=shortest.duration;
+ }
+ let text=note+'Here is a '+mins+'-minute plan ('+fmt(total)+' total):\n';
+ plan.forEach((s,i)=>{text+=(i+1)+'. '+s.name+' ('+fmt(s.duration)+')\n'});
+ if(target-total>180){
+  text+='\nYour library only has '+fmt(total)+' of matching music. Add more songs to reach '+mins+' minutes.';
+ }
+ text+='\n(Loading it replaces your current playlist.)';
+ flowAdd(text.trim(),'flow',[
+  {label:'📋 Load into Playlist',action:()=>{
+   playlist=plan.slice();
+   saveDJData();
+   renderPlaylist();
+   showPage('playlists');
+  }},
+  {label:'▶ Play first song',action:()=>{
+   playSong(plan[0]);
+   showPage('home');
+  }}
+ ]);
+}
+
+function flowReply(text){
+ const t=text.toLowerCase();
+ const mins=flowMinutes(text);
+ const cat=flowCategory(text);
+
+ const nm=text.match(/(?:\bi am|\bi'm|\bim|my name is)\s+([a-z]+)/i);
+ const notNames=/^(planning|looking|trying|going|ready|here|new|a|an|the|not|just|so|very|good|fine|ok|okay|back|wanting|needing)$/i;
+ if(nm&&!mins&&!cat&&!notNames.test(nm[1])&&text.split(/\s+/).length<=6){
+  flowName=nm[1].charAt(0).toUpperCase()+nm[1].slice(1).toLowerCase();
+  try{localStorage.setItem('djflow_name',flowName)}catch(e){}
+  flowAdd('Nice to meet you, '+flowName+'! 👋 What are we planning today—a church program, a party, or something else?','flow');
+  return;
+ }
+
+ if(/^(hi|hello|hey|yo|good (morning|afternoon|evening))\b/.test(t)&&!mins&&!cat){
+  flowHello();
+  return;
+ }
+
+ if(mins){
+  const useCat=cat||(flowPending&&flowPending.cat)||null;
+  flowPending=null;
+  flowPlan(mins,useCat);
+  return;
+ }
+
+ if(/mix|crossfad|transition|blend/.test(t)){
+  flowAdd("Here is how to mix with Deck A and Deck B on the Home tab:\n\n1. Load a song in Deck A and press play.\n2. Load your next song in Deck B (don't play it yet).\n3. Slide the crossfader fully left so only Deck A is heard.\n4. When Deck A is near the end, press play on Deck B and slowly slide the crossfader to the right.\n5. When only Deck B is heard, load the next song in Deck A.\n\nTip: songs with a similar speed (BPM) blend more smoothly.",'flow',
+   [{label:'🎧 Go to decks',action:()=>showPage('home')}]);
+  return;
+ }
+
+ if(flowPending){
+  const n=t.match(/^\s*(\d+)\s*$/);
+  if(n){
+   const c=flowPending.cat;
+   flowPending=null;
+   flowPlan(parseInt(n[1],10),c);
+   return;
+  }
+ }
+
+ if(cat){
+  flowPending={cat:cat};
+  if(/program|service/.test(t)){
+   flowAdd("A church program usually flows like this:\n1. Opening praise: lively, joyful songs\n2. Worship: slower, deeper songs\n3. Offering or response: soft and steady\n4. Closing: uplifting songs\n\nHow many minutes should the music be? Just send a number, like 40.",'flow');
+  }else{
+   flowAdd('Got it, '+(cat==='Christian'?'praise and worship':'party')+' music. How many minutes should I plan? Just send a number, like 30.','flow');
+  }
+  return;
+ }
+
+ if(/help|what can you do/.test(t)){
+  flowAdd("I can help you:\n• Plan music by time and type, like \"Plan 40 minutes of worship\" or \"1 hour party\"\n• Explain how to mix with Deck A and Deck B\n• Remember your name\n\nTry one of the buttons below the chat!",'flow');
+  return;
+ }
+
+ flowAdd("I'm not sure I understood that yet. Try something like \"Plan 40 minutes of worship\" or \"1 hour party\", or ask \"How do I mix two songs?\". The buttons below the chat can help too.",'flow');
+}
+/* ---------- DJ CHAT (saved on this phone only for now) ---------- */
+let chats=null;
+let chatFilter='all';
+let openChatId=null;
+
+function chatTime(ts){
+ const d=new Date(ts);
+ return String(d.getHours()).padStart(2,'0')+':'+
+  String(d.getMinutes()).padStart(2,'0');
+}
+
+function seedChats(){
+ const now=Date.now();
+ return [
+  {id:'djdo',type:'personal',name:'DJ DO',badge:'👑 Admin',pinned:true,
+   messages:[{from:'DJ DO',
+    text:"Welcome to DJ Flow Pro! 🎧 I'm DJ DO, the admin of this app. This is where DJs will connect, share ideas and grow together.",
+    ts:now}]},
+  {id:'community',type:'group',name:'DJ Flow Community',badge:'',pinned:true,
+   members:['DJ DO','You'],
+   messages:[{from:'DJ DO',
+    text:"Welcome to the DJ Flow Community! 🔥 Share tips, ask questions and support each other.",
+    ts:now-1000}]}
+ ];
+}
+
+function getChats(){
+ if(chats)return chats;
+ try{
+  const saved=JSON.parse(localStorage.getItem('djflow_chats')||'null');
+  if(saved&&saved.length)chats=saved;
+ }catch(e){}
+ if(!chats)chats=seedChats();
+ return chats;
+}
+
+function saveChats(){
+ try{localStorage.setItem('djflow_chats',JSON.stringify(chats))}catch(e){}
+}
+
+function openChats(){
+ showPage('chat');
+ document.querySelector('#nav button[data-page="dj"]').classList.add('active');
+ closeConvo();
+}
+
+function chatBackToDJ(){
+ showPage('dj');
+}
+
+function setChatFilter(f){
+ chatFilter=f;
+ document.querySelectorAll('.chatfilters button').forEach(b=>{
+  b.classList.toggle('active',b.dataset.f===f);
+ });
+ renderChatList();
+}
+
+function toggleNewChat(){
+ const box=document.getElementById('newChatBox');
+ box.style.display=box.style.display==='none'?'block':'none';
+}
+
+function createChat(type){
+ const input=document.getElementById('newChatName');
+ const name=input.value.trim();
+ if(!name)return;
+ const list=getChats();
+ list.push({
+  id:'c'+Date.now(),type:type,name:name,badge:'',pinned:false,
+  members:type==='group'?['You']:[],
+  messages:[]
+ });
+ saveChats();
+ input.value='';
+ toggleNewChat();
+ renderChatList();
+}
+
+function lastTs(c){
+ return c.messages.length?c.messages[c.messages.length-1].ts:0;
+}
+
+function renderChatList(){
+ const box=document.getElementById('chatList');
+ box.innerHTML='';
+ const list=getChats()
+  .filter(c=>chatFilter==='all'||c.type===chatFilter)
+  .sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)||lastTs(b)-lastTs(a));
+
+ if(!list.length){
+  box.innerHTML='<p>No chats here yet. Tap New chat.</p>';
+  return;
+ }
+
+ list.forEach(c=>{
+  const row=document.createElement('div');
+  row.className='chatitem';
+  const av=document.createElement('div');
+  av.className='avatar'+(c.type==='group'?' group':'');
+  av.textContent=c.type==='group'?'👥':c.name.charAt(0).toUpperCase();
+  const info=document.createElement('div');
+  info.className='chatinfo';
+  const nm=document.createElement('strong');
+  nm.textContent=c.name+(c.badge?' '+c.badge:'');
+  const last=c.messages[c.messages.length-1];
+  const prev=document.createElement('small');
+  if(last){
+   const prefix=last.from==='You'?'You: ':(c.type==='group'?last.from+': ':'');
+   prev.textContent=prefix+last.text;
+  }else{
+   prev.textContent='No messages yet';
+  }
+  info.append(nm,prev);
+  const tm=document.createElement('span');
+  tm.className='chattime';
+  tm.textContent=last?chatTime(last.ts):'';
+  row.append(av,info,tm);
+  row.onclick=()=>openConvo(c.id);
+  box.append(row);
+ });
+}
+
+function openConvo(id){
+ const c=getChats().find(x=>x.id===id);
+ if(!c)return;
+ openChatId=id;
+ document.getElementById('chatListView').style.display='none';
+ document.getElementById('chatConvoView').style.display='block';
+ const av=document.getElementById('convoAvatar');
+ av.className='avatar'+(c.type==='group'?' group':'');
+ av.textContent=c.type==='group'?'👥':c.name.charAt(0).toUpperCase();
+ document.getElementById('convoName').textContent=
+  c.name+(c.badge?' '+c.badge:'');
+ document.getElementById('convoSub').textContent=
+  c.type==='group'?(c.members||[]).join(', '):'Personal chat';
+ renderConvo();
+}
+
+function closeConvo(){
+ openChatId=null;
+ document.getElementById('chatConvoView').style.display='none';
+ document.getElementById('chatListView').style.display='block';
+ renderChatList();
+}
+
+function renderConvo(){
+ const box=document.getElementById('convoMessages');
+ box.innerHTML='';
+ const c=getChats().find(x=>x.id===openChatId);
+ if(!c)return;
+ if(!c.messages.length){
+  const p=document.createElement('p');
+  p.textContent='No messages yet. Say hello! 👋';
+  box.append(p);
+ }
+ c.messages.forEach(m=>{
+  const mine=m.from==='You';
+  const b=document.createElement('div');
+  b.className='msg '+(mine?'me':'them');
+  if(c.type==='group'&&!mine){
+   const w=document.createElement('span');
+   w.className='who';
+   w.textContent=m.from;
+   b.append(w);
+  }
+  const t=document.createElement('span');
+  t.textContent=m.text;
+  b.append(t);
+  const when=document.createElement('span');
+  when.className='when';
+  when.textContent=chatTime(m.ts);
+  b.append(when);
+  box.append(b);
+ });
+ box.scrollTop=box.scrollHeight;
+}
+
+function sendChatMessage(){
+ const input=document.getElementById('convoInput');
+ const text=input.value.trim();
+ if(!text||!openChatId)return;
+ const c=getChats().find(x=>x.id===openChatId);
+ if(!c)return;
+ c.messages.push({from:'You',text:text,ts:Date.now()});
+ saveChats();
+ input.value='';
+ renderConvo();
+}
+
+/* ---------- SAVE / LOAD favourites and playlist ---------- */
+function loadDJData(){
+ try{
+  const savedFavourites=
+   JSON.parse(localStorage.getItem('djflow_favourites')||'[]');
+  favourites=new Set(savedFavourites);
+  const savedPlaylist=
+   JSON.parse(localStorage.getItem('djflow_playlist')||'[]');
+  playlist=savedPlaylist
+   .map(id=>library.find(song=>song.id===id))
+   .filter(Boolean);
+ }catch(error){
+  console.log('Could not load DJ data:',error);
+ }
+}
+
+function saveDJData(){
+ try{
+  localStorage.setItem('djflow_favourites',JSON.stringify([...favourites]));
+  localStorage.setItem('djflow_playlist',
+   JSON.stringify(playlist.map(song=>song.id)));
+ }catch(error){
+  console.log('Could not save DJ data:',error);
+ }
+}
+
+renderSongs();
+renderPlaylist();
+applyDeckVolumes(Number(document.getElementById('crossfader').value));
+flowHello();
+initApp();
+</script>
+<link rel="stylesheet" href="theme.css">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#191c2b">
+<link rel="icon" href="icon-192.png">
+<script src="flowai.js"></script>
+<script src="decks.js"></script>
+<script src="beat.js"></script>
+<script src="onlinechat.js"></script>
+<script src="vinyl.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){})}</script>
+</body>
+</html>
